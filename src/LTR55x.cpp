@@ -1,4 +1,5 @@
 #include "LTR55x.h"
+#include <Arduino.h>
 
 /* LTR5XX Registers address*/
 #define LTR5XX_ALS_CONTR_REG 0x80
@@ -147,8 +148,13 @@ LTR55x::~LTR55x()
 {
 }
 
-void LTR55x::begin()
+bool LTR55x::begin()
 {
+    Wire.beginTransmission(LTR55X_ADDR);
+    byte error = Wire.endTransmission();
+
+    if (error != 0)
+        return false;
     // 数据清零
     set_als_mode(0x02);
     // 配置置工作数据
@@ -158,6 +164,13 @@ void LTR55x::begin()
     set_led_current(LTR5XX_LED_PEAK_CURRENT_100MA);
     set_als_gain(LTR5XX_ALS_MEASUREMENT_RATE_500MS);
     set_interrupt_status(0x00); //默认状态不启用中断
+    return true;
+}
+bool LTR55x::sleep()
+{
+    begin();
+    set_ps_mode(0x00);
+    return true;
 }
 void LTR55x::read(uint8_t reg_addr, uint8_t *buffer, uint8_t size)
 {

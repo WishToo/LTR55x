@@ -161,7 +161,8 @@ private:
 public:
     LTR55x(/* args */);
     ~LTR55x();
-    void begin();
+    bool begin();
+    bool sleep();
 
     void set_als_mode(uint8_t mode);
     void set_ps_mode(uint8_t mode);
